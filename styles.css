@@ -1,0 +1,29 @@
+html{
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.mainContainer{
+    width: 400px;
+    margin: 100px auto;
+}
+
+.gameContainer {
+    background: #bbada0;
+    font-size: 28px;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.tileRow {
+    display: flex;
+}
+
+.tile {
+    flex: 1;
+    justify-content: space-between;
+    margin: 5px;
+    text-align: center;
+    padding: 28px 10px;
+    background: rgba(238, 228, 218, 0.35);
+    border-radius: 3px;
+}
