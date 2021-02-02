@@ -14,7 +14,7 @@ playGame = () => {
                     }
                 }
             }
-            return emptyCells[Math.round((Math.random() * 10) % emptyCells.length)];
+            return emptyCells[Math.floor((Math.random() * 10) % emptyCells.length)];
         };
         /* getRandomRow: function() {
             return Math.round((Math.random() * 10) % 4);
@@ -23,32 +23,56 @@ playGame = () => {
             return Math.round((Math.random() * 10) % 4);
         }, */
         this.getRandomValue = function() {
-            const values = [2, 4];
-            return values[Math.round((Math.random() * 10) % 2)];
+            const values = [2, 2, 2, 2, 4]; // Using this to give 2 most of the times.
+            return values[Math.floor((Math.random() * 10) % 5)];
+        };
+        this.insertNewValue = function() {
+            const cell = game.getRandomEmptyCell();
+            const rand = game.getRandomValue();
+            this.gameArray[cell[0]][cell[1]] = rand;
         };
         this.reArrangeValues = function(direction) {
             if(direction === 'right') {
+                // console.log(this.gameArray);
                 for(let i = 0; i < this.gameArray.length; i++) {
                     const row = this.gameArray[i];
-                    let emptyCellIndex = -1;
-                    let lastMovedValue = 0;
+                    let maxIndex = row.length - 1;
                     for(let j = row.length - 1; j >= 0; j--) {
                         if(row[j] === 0) {
-                            emptyCellIndex = j;
-                        } else {
-                            if(lastMovedValue !== 0 && lastMovedValue === row[j]) {
-                                
-                            }
-                            lastMovedValue = row[j];
-                        }
 
+                        } else {
+                            if(row[j] === row[maxIndex]) {
+                                if(maxIndex === j) {
+                                    continue;
+                                }
+                                row[maxIndex] += row[j];
+                                maxIndex--;
+                                row[j] = 0;
+                                hasMoved = true;
+                            } else {
+                                maxIndex = row[maxIndex] !== 0 ? --maxIndex : maxIndex;
+                                if(maxIndex === j) {
+                                    continue;
+                                }
+                                row[maxIndex] = row[j];
+                                row[j] = 0;
+                            }
+                        }
                     }
                 }
+                // console.log(this.gameArray);
+                this.insertNewValue();
+                console.log(this.gameArray);
             }
         }
     }
 
     const game = new Game();
+    for(let i = 0; i < 2; i++) {
+        game.insertNewValue();
+    }
+
+    console.log(game.gameArray);
 
     window.onkeyup = ($event) => {
         const arrowKeys = [37, 38, 39, 40];
