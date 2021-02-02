@@ -3,7 +3,6 @@ playGame = () => {
     function Game() {
         this.arrowKeys = [37, 38, 39, 40];
         this.gameArray = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; //2D
-        this.hasMoved = false;
         this.getRandomEmptyCell = function() {
             const emptyCells = []; //2D
             for(let i = 0; i < this.gameArray.length; i++) {
@@ -14,94 +13,172 @@ playGame = () => {
                     }
                 }
             }
-            return emptyCells[Math.floor((Math.random() * 10) % emptyCells.length)];
+            return emptyCells.length ? emptyCells[Math.floor((Math.random() * 10) % emptyCells.length)] : emptyCells;
         };
-        /* getRandomRow: function() {
-            return Math.round((Math.random() * 10) % 4);
-        },
-        getRandomColumn: function() {
-            return Math.round((Math.random() * 10) % 4);
-        }, */
         this.getRandomValue = function() {
             const values = [2, 2, 2, 2, 4]; // Using this to give 2 most of the times.
             return values[Math.floor((Math.random() * 10) % 5)];
         };
         this.insertNewValue = function() {
-            const cell = game.getRandomEmptyCell();
-            const rand = game.getRandomValue();
+            const cell = this.getRandomEmptyCell();
+            if(!cell || !cell.length) {
+                window.alert("Game Over");
+                window.removeEventListener('keyup', (e) => {
+                    const keyCode = e.keyCode;
+                });
+                return;
+            }
+            const rand = this.getRandomValue();
             this.gameArray[cell[0]][cell[1]] = rand;
+            this.bindToDOM();
         };
         this.reArrangeValues = function(direction) {
+            let hasMoved = false;
             if(direction === 'right') {
-                // console.log(this.gameArray);
-                for(let i = 0; i < this.gameArray.length; i++) {
-                    const row = this.gameArray[i];
-                    let maxIndex = row.length - 1;
-                    for(let j = row.length - 1; j >= 0; j--) {
-                        if(row[j] === 0) {
+                hasMoved = this.handleRightClick(this.gameArray);
+            } else if(direction === 'left') {
+                hasMoved = this.handleLeftClick(this.gameArray);
+                console.log(this.gameArray);
+            } else if(direction === 'top') {
+                //convert gameArray to columnar array
+                const colArray = this.transformToColumnarArray(this.gameArray);
+                hasMoved = this.handleLeftClick(colArray);
+                this.gameArray = this.transformToColumnarArray(colArray);
+            } else if(direction === 'down') {
+                //convert gameArray to columnar array
+                const colArray = this.transformToColumnarArray(this.gameArray);
+                hasMoved = this.handleRightClick(colArray);
+                this.gameArray = this.transformToColumnarArray(colArray);
+            }
+            if(hasMoved) {
+                this.insertNewValue();
+            } else {
+                const cell = this.getRandomEmptyCell();
+                if(!cell || !cell.length) {
+                    window.alert("Game Over");
+                    window.removeEventListener('keyup', (e) => {
+                        const keyCode = e.keyCode;
+                    });
+                    return;
+                }
+            }
 
-                        } else {
-                            if(row[j] === row[maxIndex]) {
-                                if(maxIndex === j) {
-                                    continue;
-                                }
-                                row[maxIndex] += row[j];
-                                maxIndex--;
-                                row[j] = 0;
-                                hasMoved = true;
-                            } else {
-                                maxIndex = row[maxIndex] !== 0 ? --maxIndex : maxIndex;
-                                if(maxIndex === j) {
-                                    continue;
-                                }
-                                row[maxIndex] = row[j];
-                                row[j] = 0;
+            console.log(this.gameArray);
+        };
+        this.handleLeftClick = function(array) {
+            let hasMoved = false;
+            for(let i = 0; i < array.length; i++) {
+                const row = array[i];
+                let minIndex = 0;
+                for(let j = 0; j < row.length; j++) {
+                    if(row[j] === 0) {
+
+                    } else {
+                        if(row[j] === row[minIndex]) {
+                            if(minIndex === j) {
+                                continue;
                             }
+                            row[minIndex] += row[j];
+                            minIndex++;
+                            row[j] = 0;
+                            hasMoved = true;
+                        } else {
+                            minIndex = row[minIndex] !== 0 ? ++minIndex : minIndex;
+                            if(minIndex === j) {
+                                continue;
+                            }
+                            row[minIndex] = row[j];
+                            row[j] = 0;
+                            hasMoved = true;
                         }
                     }
                 }
-                // console.log(this.gameArray);
-                this.insertNewValue();
-                console.log(this.gameArray);
+            }
+            return hasMoved;
+        };
+        this.handleRightClick = function(array) {
+            let hasMoved = false;
+            for(let i = 0; i < array.length; i++) {
+                const row = array[i];
+                let maxIndex = row.length - 1;
+                for(let j = row.length - 1; j >= 0; j--) {
+                    if(row[j] === 0) {
+
+                    } else {
+                        if(row[j] === row[maxIndex]) {
+                            if(maxIndex === j) {
+                                continue;
+                            }
+                            row[maxIndex] += row[j];
+                            maxIndex--;
+                            row[j] = 0;
+                            hasMoved = true;
+                        } else {
+                            maxIndex = row[maxIndex] !== 0 ? --maxIndex : maxIndex;
+                            if(maxIndex === j) {
+                                continue;
+                            }
+                            row[maxIndex] = row[j];
+                            row[j] = 0;
+                            hasMoved = true;
+                        }
+                    }
+                }
+            }
+            return hasMoved;
+        };
+        this.transformToColumnarArray = (array) => {
+            const colArray = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+            for(let i = 0; i < array.length; i++) {
+                const row = array[i];
+                for(let j = 0; j < row.length; j++) {
+                    colArray[j][i] = row[j];
+                }
+            }
+            return colArray;
+        };
+        this.bindToDOM = function() {
+            for(let i = 0; i < this.gameArray.length; i++) {
+                const row = this.gameArray[i];
+                for(let j = 0; j < row.length; j++) {
+                    document.querySelector('.tile_' + i + j).innerHTML = row[j] !== 0 ? row[j] : '&nbsp';
+                }
             }
         }
     }
 
-    const game = new Game();
-    for(let i = 0; i < 2; i++) {
-        game.insertNewValue();
+    window.onload = () => {
+        const game = new Game();
+        for(let i = 0; i < 2; i++) {
+            game.insertNewValue();
+        }
+    
+        console.log(game.gameArray);
+        
+        window.onkeyup = ($event) => {
+            const arrowKeys = [37, 38, 39, 40];
+            const keyCode = $event.keyCode;
+            if(arrowKeys.indexOf(keyCode) === -1) {
+                return;
+            }
+            switch(keyCode) {
+                case 37: //left arrow key
+                    game.reArrangeValues('left');
+                    break;
+                case 38: //top arrow key
+                    game.reArrangeValues('top');
+                    break;
+                case 39: //right arrow key
+                    game.reArrangeValues('right');
+                    break;
+                case 40: //down arrow key
+                    game.reArrangeValues('down');
+                    break;
+                default:
+                    break;
+            }
+        };
     }
-
-    console.log(game.gameArray);
-
-    window.onkeyup = ($event) => {
-        const arrowKeys = [37, 38, 39, 40];
-        const keyCode = $event.keyCode;
-        if(arrowKeys.indexOf(keyCode) === -1) {
-            return;
-        }
-        switch(keyCode) {
-            case 37: //left arrow key
-                game.reArrangeValues('left');
-                break;
-            case 38: //top arrow key
-                game.reArrangeValues('top');
-                break;
-            case 39: //right arrow key
-                game.reArrangeValues('right');
-                break;
-            case 40: //down arrow key
-                game.reArrangeValues('down');
-                break;
-            default:
-                const emptyCell = game.getRandomEmptyCell();
-                const newValue = game.getRandomValue();
-                game[emptyCell[0]][emptyCell[1]] = newValue;
-                break;
-        }
-    };
-
-
 }
 
 playGame();
