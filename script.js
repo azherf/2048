@@ -3,6 +3,8 @@ playGame = () => {
     function Game() {
         this.arrowKeys = [37, 38, 39, 40];
         this.gameArray = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; //2D
+        this.score = 0;
+        this.bestScore = +localStorage.getItem("bestScore");
         this.getRandomEmptyCell = function() {
             const emptyCells = []; //2D
             for(let i = 0; i < this.gameArray.length; i++) {
@@ -38,7 +40,7 @@ playGame = () => {
                 hasMoved = this.handleRightClick(this.gameArray);
             } else if(direction === 'left') {
                 hasMoved = this.handleLeftClick(this.gameArray);
-                console.log(this.gameArray);
+                // console.log(this.gameArray);
             } else if(direction === 'top') {
                 //convert gameArray to columnar array
                 const colArray = this.transformToColumnarArray(this.gameArray);
@@ -63,7 +65,7 @@ playGame = () => {
                 }
             }
 
-            console.log(this.gameArray);
+            // console.log(this.gameArray);
         };
         this.handleLeftClick = function(array) {
             let hasMoved = false;
@@ -79,6 +81,7 @@ playGame = () => {
                                 continue;
                             }
                             row[minIndex] += row[j];
+                            this.addToCurrentScore(row[minIndex]);
                             minIndex++;
                             row[j] = 0;
                             hasMoved = true;
@@ -110,6 +113,7 @@ playGame = () => {
                                 continue;
                             }
                             row[maxIndex] += row[j];
+                            this.addToCurrentScore(row[maxIndex]);
                             maxIndex--;
                             row[j] = 0;
                             hasMoved = true;
@@ -151,7 +155,6 @@ playGame = () => {
                     } else {
                         elem.innerHTML = '&nbsp';
                     }
-                    
                 }
             }
         };
@@ -159,16 +162,48 @@ playGame = () => {
             var regx = new RegExp('\\b' + prefix + '[^ ]*[ ]?\\b', 'g');
             node.className = node.className.replace(regx, '');
             return node;
-        }
+        };
+        this.resetGame = function() {
+            this.gameArray = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+            this.insertInitialValues();
+            this.bindToDOM();
+            this.score = 0;
+            this.updateCurrentScoreOnDOM();
+        };
+        this.insertInitialValues = function() {
+            for(let i = 0; i < 2; i++) {
+                this.insertNewValue();
+            }
+        };
+        this.addToCurrentScore = function(value) {
+            this.score += value;
+            this.updateCurrentScoreOnDOM();
+            if(this.score > this.bestScore) {
+                this.updateBestScore(this.score);
+            }
+        };
+        this.updateBestScore = function(value) {
+            this.bestScore = value;
+            localStorage.setItem("bestScore", value);
+            this.updateBestScoreOnDOM();
+        };
+        this.updateCurrentScoreOnDOM = function() {
+            document.querySelector(".thisScore .total").innerText = this.score;
+        };
+        this.updateBestScoreOnDOM = function() {
+            document.querySelector(".bestScore .total").innerText = this.bestScore;
+        }; 
+        this.setGame = function () {
+            this.insertInitialValues();
+            this.score = 0;
+            this.updateCurrentScoreOnDOM();
+            this.updateBestScoreOnDOM();
+        };
+        this.setGame();
     }
 
     window.onload = () => {
         const game = new Game();
-        for(let i = 0; i < 2; i++) {
-            game.insertNewValue();
-        }
-    
-        console.log(game.gameArray);
         
         window.onkeyup = ($event) => {
             const arrowKeys = [37, 38, 39, 40];
@@ -193,6 +228,11 @@ playGame = () => {
                     break;
             }
         };
+
+        document.querySelector(".newGame").addEventListener("click", function() {
+            game.resetGame();
+
+        });
     }
 }
 

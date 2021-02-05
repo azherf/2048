@@ -72,3 +72,58 @@ html{
     color: #f9f6f2;
     background:#56c97f;
 }
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.head .title {
+    font-size: 72px;
+    font-weight: 600;
+}
+
+.head .scores {
+    display: flex;
+}
+
+.head .score {
+    background: #bbada0;
+    border-radius: 3px;
+    padding: 10px 15px 0;
+    text-align: center;
+    color: #eee4da;
+    margin-right: 10px;
+    width: 75px;
+    font-weight: 600;
+}
+
+.score .thisScore {
+    padding: 10 0 0;
+}
+
+.score .for {
+    color: #eee4da;
+    font-size: 11px;
+}
+
+.score .total {
+    color: #fff;
+    font-size: 20px;
+}
+
+.actionBtns {
+    margin: 10px;
+    text-align: right;
+}
+
+.actionBtns .newGame {
+    background: #8f7a66;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+}
+
