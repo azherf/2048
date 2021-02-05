@@ -141,9 +141,24 @@ playGame = () => {
             for(let i = 0; i < this.gameArray.length; i++) {
                 const row = this.gameArray[i];
                 for(let j = 0; j < row.length; j++) {
-                    document.querySelector('.tile_' + i + j).innerHTML = row[j] !== 0 ? row[j] : '&nbsp';
+                    const elem = document.querySelector('.tile_' + i + j);
+                    const prefix = 'value-';
+                    this.removeClassByPrefix(elem, prefix);
+                    if(row[j] !== 0)
+                    {
+                        elem.innerHTML = row[j];
+                        elem.classList.add(prefix + row[j]);
+                    } else {
+                        elem.innerHTML = '&nbsp';
+                    }
+                    
                 }
             }
+        };
+        this.removeClassByPrefix = function(node, prefix) {
+            var regx = new RegExp('\\b' + prefix + '[^ ]*[ ]?\\b', 'g');
+            node.className = node.className.replace(regx, '');
+            return node;
         }
     }
 

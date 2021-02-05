@@ -1,5 +1,7 @@
 html{
     font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+    color: #776e65;
+
 }
 
 .mainContainer{
@@ -26,4 +28,47 @@ html{
     padding: 28px 10px;
     background: rgba(238, 228, 218, 0.35);
     border-radius: 3px;
+}
+
+.value-2 {
+    background: #eee4da;
+}
+.value-4 {
+    background: #eee1c9;
+}
+.value-8 {
+    color: #f9f6f2;
+    background: #ffba7e;
+}
+.value-16 {
+    color: #f9f6f2;
+    background: #f69664;
+}
+.value-32 {
+    color: #f9f6f2;
+    background: #f77c5f;
+}
+.value-64 {
+    color: #f9f6f2;
+    background: #f75f3b;   
+}
+.value-128 {
+    color: #f9f6f2;
+    background:#f2d780;
+}
+.value-256 {
+    color: #f9f6f2;
+    background: #edcc62;
+}
+.value-512 {
+    color: #f9f6f2;
+    background: #7693cb;
+}
+.value-1024 {
+    color: #f9f6f2;
+    background: #76cbb0;
+}
+.value-2048 {
+    color: #f9f6f2;
+    background:#56c97f;
 }
