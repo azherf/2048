@@ -16,13 +16,18 @@ html{
     border-radius: 6px;
 }
 
-.tileRow {
+/* .tileRow {
     display: flex;
+} */
+
+.gameBoard {
+    display: flex;
+    flex-flow: row wrap;
 }
 
 .tile {
-    flex: 1;
-    justify-content: space-between;
+    flex: 1 1 15%;
+    /* justify-content: space-between; */
     margin: 5px;
     text-align: center;
     padding: 28px 10px;
